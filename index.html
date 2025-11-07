@@ -152,7 +152,7 @@
 
     <script>
         // 提示文字数组
-        const messages = [
+        const messagesForComputer = [
             "你是我的阳光",
             "遇见你是最美的意外",
             "爱是永恒的主题",
@@ -184,14 +184,42 @@
             "爱是无声的语言",
             "你是我心中的诗篇"
         ];
+
+        // 提示文字数组
+        const messagesForPhone = [
+            "你是我的阳光",
+            "遇见你是最美的意外",
+            "爱是永恒的主题",
+            "你让我的世界更美好",
+            "每天想你千百遍",
+            "你是我心中的唯一",
+            "爱不需要理由",
+            "与你相遇好幸运",
+            "你是我最美的风景",
+            "爱是心灵的港湾",
+            "你是我生命的全部",
+            "爱让世界转动",
+            "你是我永远的依靠",
+            "爱是无声的语言",
+            "你是我心中的诗篇"
+        ];
         
         // 心形坐标计算函数
-        function calculateHeartPositions(count) {
+        function calculateHeartPositions() {
             const positions = [];
             const centerX = window.innerWidth <= 500 ? 125 : 160;
             const centerY = window.innerWidth <= 500 ? 160 : 220;
             const scale = window.innerWidth <= 500 ? 8 : 20;
             
+            if( window.innerWidth <= 500) {
+                messages = messagesForPhone;
+            } else {
+                messages = messagesForComputer;
+            }
+
+            count = messages.length;
+
+            // 计算心形坐标
             for (let i = 0; i < count; i++) {
                 const t = (2 * Math.PI * i) / count;
                 // 心形参数方程
@@ -210,13 +238,15 @@
         // 创建心形提示框
         function createHeartTooltips() {
             const container = document.getElementById('heartContainer');
-            const positions = calculateHeartPositions(messages.length);
+
+            const positions = calculateHeartPositions();
             
             positions.forEach((pos, index) => {
                 const tooltip = document.createElement('div');
                 tooltip.className = 'tooltip';
                 // 添加随机颜色类
-                const colorClass = `color-${(index % 8) + 1}`;
+                const randomColor = Math.floor(Math.random() * 8) + 1;
+                const colorClass = `color-${randomColor}`;
                 tooltip.classList.add(colorClass);
                 // 设置位置
                 tooltip.style.left = `${pos.x}px`;
