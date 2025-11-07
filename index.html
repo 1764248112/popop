@@ -98,6 +98,32 @@
             color: #666;
             font-size: 14px;
         }
+
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 120px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s ease;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        /* 添加清新颜色类 */
+        .tooltip.color-1 { background-color: #FFE5E5; }
+        .tooltip.color-2 { background-color: #E5F3FF; }
+        .tooltip.color-3 { background-color: #E5FFE5; }
+        .tooltip.color-4 { background-color: #FFF5E5; }
+        .tooltip.color-5 { background-color: #F5E5FF; }
+        .tooltip.color-6 { background-color: #E5FFF5; }
+        .tooltip.color-7 { background-color: #FFE5F5; }
+        .tooltip.color-8 { background-color: #F5FFE5; }
+
         
         @media (max-width: 500px) {
             .heart-container {
@@ -175,7 +201,7 @@
         // 心形坐标计算函数
         function calculateHeartPositions(count) {
             const positions = [];
-            const centerX = window.innerWidth <= 500 ? 120 : 160;
+            const centerX = window.innerWidth <= 500 ? 125 : 160;
             const centerY = window.innerWidth <= 500 ? 160 : 220;
             const scale = window.innerWidth <= 500 ? 8 : 20;
             
@@ -202,6 +228,320 @@
             positions.forEach((pos, index) => {
                 const tooltip = document.createElement('div');
                 tooltip.className = 'tooltip';
+                // 添加随机颜色类
+                const colorClass = `color-${(index % 8) + 1}`;
+                tooltip.classList.add(colorClass);
+                // 设置位置
+                tooltip.style.left = `${pos.x}px`;
+                tooltip.style.top = `${pos.y}px`;
+                
+                const content = document.createElement('div');
+                content.className = 'tooltip-content';
+                content.textContent = messages[index];
+                
+                tooltip.appendChild(content);
+                container.appendChild(tooltip);
+                
+                // 点击提示框隐藏
+                tooltip.addEventListener('click', function() {
+                    this.classList.remove('active');
+                });
+            });
+        }
+        
+        // 顺序显示提示框
+        function showSequential() {
+            const tooltips = document.querySelectorAll('.tooltip');
+            hideAllTooltips();
+            
+            tooltips.forEach((tooltip, index) => {
+                setTimeout(() => {
+                    tooltip.classList.add('active');
+                }, index * 150);
+            });
+        }
+        
+        // 随机显示提示框
+        function showRandom() {
+            const tooltips = document.querySelectorAll('.tooltip');
+            hideAllTooltips();
+            
+            // 创建随机索引数组
+            const indices = Array.from({length: tooltips.length}, (_, i) => i);
+            shuffleArray(indices);
+            
+            indices.forEach((index, i) => {
+                setTimeout(() => {
+                    tooltips[index].classList.add('active');
+                }, i * 150);
+            });
+        }
+        
+        // 隐藏所有提示框
+        function hideAllTooltips() {
+            const tooltips = document.querySelectorAll('.tooltip');
+            tooltips.forEach(tooltip => {
+                tooltip.classList.remove('active');
+            });
+        }
+        
+        // 随机打乱数组
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createHeartTooltips();
+            
+            // 添加按钮事件监听
+            document.getElementById('sequentialBtn').addEventListener('click', showSequential);
+            document.getElementById('randomBtn').addEventListener('click', showRandom);
+            document.getElementById('hideAllBtn').addEventListener('click', hideAllTooltips);
+            
+            // 初始显示顺序提示框
+            setTimeout(showSequential, 500);
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>心形提示框</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: #c2185b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .heart-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 120px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s ease;
+            z-index: 10;
+            cursor: pointer;
+        }
+        
+        .tooltip.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .tooltip:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+        
+        .tooltip-content {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 120px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s ease;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        /* 添加清新颜色类 */
+        .tooltip.color-1 { background-color: #FFE5E5; }
+        .tooltip.color-2 { background-color: #E5F3FF; }
+        .tooltip.color-3 { background-color: #E5FFE5; }
+        .tooltip.color-4 { background-color: #FFF5E5; }
+        .tooltip.color-5 { background-color: #F5E5FF; }
+        .tooltip.color-6 { background-color: #E5FFF5; }
+        .tooltip.color-7 { background-color: #FFE5F5; }
+        .tooltip.color-8 { background-color: #F5FFE5; }
+
+        
+        @media (max-width: 500px) {
+            .heart-container {
+                width: 90vw;
+                height: 90vw;
+                max-width: 400px;
+                max-height: 400px;
+            }
+    
+            .tooltip {
+                width: 80px;
+                padding: 8px;
+            }
+            
+            .tooltip-content {
+                font-size: 12px;
+            }
+            
+            button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button id="sequentialBtn">顺序显示</button>
+        <button id="randomBtn">随机显示</button>
+        <button id="hideAllBtn">隐藏全部</button>
+    </div>
+    
+    <div class="heart-container" id="heartContainer"></div>
+    
+    <div class="footer">
+        <p>点击提示框可单独隐藏，使用按钮控制全部显示/隐藏</p>
+    </div>
+
+    <script>
+        // 提示文字数组
+        const messages = [
+            "你是我的阳光",
+            "遇见你是最美的意外",
+            "爱是永恒的主题",
+            "你让我的世界更美好",
+            "每天想你千百遍",
+            "你是我心中的唯一",
+            "爱不需要理由",
+            "与你相遇好幸运",
+            "你是我最美的风景",
+            "爱是心灵的港湾",
+            "你是我生命的全部",
+            "爱让世界转动",
+            "你是我永远的依靠",
+            "爱是无声的语言",
+            "你是我心中的诗篇",
+            "你是我的阳光",
+            "遇见你是最美的意外",
+            "爱是永恒的主题",
+            "你让我的世界更美好",
+            "每天想你千百遍",
+            "你是我心中的唯一",
+            "爱不需要理由",
+            "与你相遇好幸运",
+            "你是我最美的风景",
+            "爱是心灵的港湾",
+            "你是我生命的全部",
+            "爱让世界转动",
+            "你是我永远的依靠",
+            "爱是无声的语言",
+            "你是我心中的诗篇"
+        ];
+        
+        // 心形坐标计算函数
+        function calculateHeartPositions(count) {
+            const positions = [];
+            const centerX = window.innerWidth <= 500 ? 125 : 160;
+            const centerY = window.innerWidth <= 500 ? 160 : 220;
+            const scale = window.innerWidth <= 500 ? 8 : 20;
+            
+            for (let i = 0; i < count; i++) {
+                const t = (2 * Math.PI * i) / count;
+                // 心形参数方程
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+                
+                positions.push({
+                    x: centerX + x * scale,
+                    y: centerY - y * scale
+                });
+            }
+            
+            return positions;
+        }
+        
+        // 创建心形提示框
+        function createHeartTooltips() {
+            const container = document.getElementById('heartContainer');
+            const positions = calculateHeartPositions(messages.length);
+            
+            positions.forEach((pos, index) => {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                // 添加随机颜色类
+                const colorClass = `color-${(index % 8) + 1}`;
+                tooltip.classList.add(colorClass);
+                // 设置位置
                 tooltip.style.left = `${pos.x}px`;
                 tooltip.style.top = `${pos.y}px`;
                 
